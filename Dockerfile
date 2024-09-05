@@ -22,6 +22,7 @@ RUN curl -L -o scrcpy-server https://github.com/Genymobile/scrcpy/releases/downl
 RUN echo "$SERVER_HASH  /scrcpy-server" | sha256sum -c -
 RUN git clone https://github.com/Genymobile/scrcpy.git
 RUN cd scrcpy && meson x --buildtype=release --strip -Db_lto=true -Dprebuilt_server=/scrcpy-server
+RUN cd scrcpy/x && ninja
 RUN cd scrcpy/x && ninja install
 
 ### runner
@@ -35,22 +36,9 @@ LABEL maintainer="Pierre Gordon <pierregordon@protonmail.com>"
 RUN apk add --no-cache \
         android-tools \
         ffmpeg \
-        virtualgl
+        virtualgl \
+	libusb-dev
 
 COPY --from=builder /scrcpy-server /usr/local/share/scrcpy/
 COPY --from=builder /scrcpy/x/app/scrcpy /usr/local/bin/
 
-### runner (amd)
-FROM runner AS amd
-
-RUN apk add --no-cache mesa-dri-gallium
-
-### runner (intel)
-FROM runner AS intel
-
-RUN apk add --no-cache mesa-dri-intel
-
-### runner (nvidia)
-FROM runner AS nvidia
-
-RUN apk add --no-cache mesa-dri-nouveau
