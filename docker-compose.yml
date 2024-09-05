@@ -20,8 +20,8 @@ services:
         tty: true
         network_mode: host
         environment:
-            - MTX_PROTOCOLS=tcp
-            - MTX_WEBRTCADDITIONALHOSTS=192.168.0.224
+            - MTX_PROTOCOLS=tcp,udp
+            - MTX_WEBRTCADDITIONALHOSTS=127.0.0.1,192.168.0.224
         image: bluenviron/mediamtx:latest-ffmpeg
         volumes: 
           - $PWD/mediamtx.yml:/mediamtx.yml
