@@ -1,8 +1,8 @@
-name: rudy-camera
+name: scrcpy-mediamtx-docker
 
 services:
   scrcpy:
-    image: scrcpy-test:latest
+    image: tommytz/scrcpy-docker:latest
     volumes:
       - /dev/bus/usb:/dev/bus/usb:ro
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
