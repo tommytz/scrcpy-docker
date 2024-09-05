@@ -14,17 +14,19 @@ services:
     network_mode: host
     tty: true
     stdin_open: true
+    restart: unless-stopped
 
   mediamtx:
-        stdin_open: true
-        tty: true
-        network_mode: host
-        environment:
-            - MTX_PROTOCOLS=tcp,udp
-            - MTX_WEBRTCADDITIONALHOSTS=127.0.0.1,192.168.0.224
-        image: bluenviron/mediamtx:latest-ffmpeg
-        volumes: 
-          - $PWD/mediamtx.yml:/mediamtx.yml
+    stdin_open: true
+    tty: true
+    network_mode: host
+    environment:
+      - MTX_PROTOCOLS=tcp,udp
+      - MTX_WEBRTCADDITIONALHOSTS=127.0.0.1,192.168.0.224
+    image: bluenviron/mediamtx:latest-ffmpeg
+    volumes: 
+      - $PWD/mediamtx.yml:/mediamtx.yml
+    restart: unless-stopped
 
 
 volumes:

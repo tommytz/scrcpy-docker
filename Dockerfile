@@ -42,3 +42,6 @@ RUN apk add --no-cache \
 COPY --from=builder /scrcpy-server /usr/local/share/scrcpy/
 COPY --from=builder /scrcpy/x/app/scrcpy /usr/local/bin/
 
+COPY --chmod=764 entrypoint.sh /
+
+ENTRYPOINT ["./entrypoint.sh"]
