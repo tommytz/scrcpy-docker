@@ -1,27 +1,28 @@
 ### builder
 FROM alpine:edge AS builder
 
-ARG SCRCPY_VER=1.16
-ARG SERVER_HASH="94a79e05b4498d0460ab7bd9d12cbf05156e3a47bf0c5d1420cee1d4493b3832"
+ARG SCRCPY_VER=2.6.1
+ARG SERVER_HASH="ca7ab50b2e25a0e5af7599c30383e365983fa5b808e65ce2e1c1bba5bfe8dc3b"
 
 RUN apk add --no-cache \
         curl \
         ffmpeg-dev \
         gcc \
         git \
+	libusb-dev \
         make \
         meson \
         musl-dev \
-        openjdk8 \
+        openjdk17 \
         pkgconf \
         sdl2-dev
 
-RUN PATH=$PATH:/usr/lib/jvm/java-1.8-openjdk/bin
+RUN PATH=$PATH:/usr/lib/jvm/java-17-openjdk/bin
 RUN curl -L -o scrcpy-server https://github.com/Genymobile/scrcpy/releases/download/v${SCRCPY_VER}/scrcpy-server-v${SCRCPY_VER}
 RUN echo "$SERVER_HASH  /scrcpy-server" | sha256sum -c -
 RUN git clone https://github.com/Genymobile/scrcpy.git
-RUN cd scrcpy && meson x --buildtype release --strip -Db_lto=true -Dprebuilt_server=/scrcpy-server
-RUN cd scrcpy/x && ninja
+RUN cd scrcpy && meson x --buildtype=release --strip -Db_lto=true -Dprebuilt_server=/scrcpy-server
+RUN cd scrcpy/x && ninja install
 
 ### runner
 FROM alpine:edge AS runner
@@ -42,7 +43,7 @@ COPY --from=builder /scrcpy/x/app/scrcpy /usr/local/bin/
 ### runner (amd)
 FROM runner AS amd
 
-RUN apk add --no-cache mesa-dri-swrast
+RUN apk add --no-cache mesa-dri-gallium
 
 ### runner (intel)
 FROM runner AS intel
