@@ -1,18 +1,31 @@
-version: '3.7'
+name: rudy-camera
 
 services:
   scrcpy:
-    image: pierlo1/scrcpy:${SCRCPY_GRAPHICS_TYPE:?Please set the SCRCPY_GRAPHICS_TYPE environment variable.}
+    image: scrcpy-test:latest
     volumes:
       - /dev/bus/usb:/dev/bus/usb:ro
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
       # preserve authorization keys
       - scrcpy_adb_keys:/root/.android
     environment:
-      DISPLAY: $DISPLAY
       ADB_VENDOR_KEYS: /root/.android
     privileged: true
+    network_mode: host
     tty: true
+    stdin_open: true
+
+  mediamtx:
+        stdin_open: true
+        tty: true
+        network_mode: host
+        environment:
+            - MTX_PROTOCOLS=tcp
+            - MTX_WEBRTCADDITIONALHOSTS=192.168.0.224
+        image: bluenviron/mediamtx:latest-ffmpeg
+        volumes: 
+          - $PWD/mediamtx.yml:/mediamtx.yml
+
 
 volumes:
   scrcpy_adb_keys:
